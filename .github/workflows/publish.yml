@@ -1,0 +1,16 @@
+name: Publish
+# Manual only. A crate is published by `cargo publish` with a crates.io token, which this workflow never has: it only
+# builds, tests and packages the crate, without any credential.
+on:
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo test
+      - name: Package (no publication)
+        run: cargo package

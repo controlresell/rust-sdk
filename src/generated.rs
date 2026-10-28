@@ -1164,6 +1164,13 @@ pub mod types {
             skip_serializing_if = "::std::option::Option::is_none"
         )]
         pub round_type: ::std::option::Option<::std::string::String>,
+        #[serde(
+            rename = "scheduledAt",
+            skip_serializing_if = "::std::option::Option::is_none"
+        )]
+        pub scheduled_at: ::std::option::Option<
+            ::chrono::DateTime<::chrono::offset::Utc>,
+        >,
         #[serde(rename = "type")]
         pub type_: ::std::string::String,
         pub value: ::std::string::String,
@@ -1183,6 +1190,13 @@ pub mod types {
             skip_serializing_if = "::std::option::Option::is_none"
         )]
         pub cancel_before_proceeding: ::std::option::Option<bool>,
+        #[serde(
+            rename = "scheduledAt",
+            skip_serializing_if = "::std::option::Option::is_none"
+        )]
+        pub scheduled_at: ::std::option::Option<
+            ::chrono::DateTime<::chrono::offset::Utc>,
+        >,
     }
     impl PublishRequest {
         pub fn builder() -> builder::PublishRequest {
@@ -1212,6 +1226,13 @@ pub mod types {
             skip_serializing_if = "::std::option::Option::is_none"
         )]
         pub price_variation: ::std::option::Option<::std::string::String>,
+        #[serde(
+            rename = "scheduledAt",
+            skip_serializing_if = "::std::option::Option::is_none"
+        )]
+        pub scheduled_at: ::std::option::Option<
+            ::chrono::DateTime<::chrono::offset::Utc>,
+        >,
     }
     impl RepublishRequest {
         pub fn builder() -> builder::RepublishRequest {
@@ -7493,6 +7514,10 @@ pub mod types {
                 ::std::option::Option<::std::string::String>,
                 ::std::string::String,
             >,
+            scheduled_at: ::std::result::Result<
+                ::std::option::Option<::chrono::DateTime<::chrono::offset::Utc>>,
+                ::std::string::String,
+            >,
             type_: ::std::result::Result<::std::string::String, ::std::string::String>,
             value: ::std::result::Result<::std::string::String, ::std::string::String>,
         }
@@ -7502,6 +7527,7 @@ pub mod types {
                     account_ids: Ok(Default::default()),
                     round_step: Ok(Default::default()),
                     round_type: Ok(Default::default()),
+                    scheduled_at: Ok(Default::default()),
                     type_: Err("no value supplied for type_".to_string()),
                     value: Err("no value supplied for value".to_string()),
                 }
@@ -7546,6 +7572,20 @@ pub mod types {
                     });
                 self
             }
+            pub fn scheduled_at<T>(mut self, value: T) -> Self
+            where
+                T: ::std::convert::TryInto<
+                    ::std::option::Option<::chrono::DateTime<::chrono::offset::Utc>>,
+                >,
+                T::Error: ::std::fmt::Display,
+            {
+                self.scheduled_at = value
+                    .try_into()
+                    .map_err(|e| {
+                        format!("error converting supplied value for scheduled_at: {e}")
+                    });
+                self
+            }
             pub fn type_<T>(mut self, value: T) -> Self
             where
                 T: ::std::convert::TryInto<::std::string::String>,
@@ -7580,6 +7620,7 @@ pub mod types {
                     account_ids: value.account_ids?,
                     round_step: value.round_step?,
                     round_type: value.round_type?,
+                    scheduled_at: value.scheduled_at?,
                     type_: value.type_?,
                     value: value.value?,
                 })
@@ -7591,6 +7632,7 @@ pub mod types {
                     account_ids: Ok(value.account_ids),
                     round_step: Ok(value.round_step),
                     round_type: Ok(value.round_type),
+                    scheduled_at: Ok(value.scheduled_at),
                     type_: Ok(value.type_),
                     value: Ok(value.value),
                 }
@@ -7606,12 +7648,17 @@ pub mod types {
                 ::std::option::Option<bool>,
                 ::std::string::String,
             >,
+            scheduled_at: ::std::result::Result<
+                ::std::option::Option<::chrono::DateTime<::chrono::offset::Utc>>,
+                ::std::string::String,
+            >,
         }
         impl ::std::default::Default for PublishRequest {
             fn default() -> Self {
                 Self {
                     account_ids: Err("no value supplied for account_ids".to_string()),
                     cancel_before_proceeding: Ok(Default::default()),
+                    scheduled_at: Ok(Default::default()),
                 }
             }
         }
@@ -7642,6 +7689,20 @@ pub mod types {
                     });
                 self
             }
+            pub fn scheduled_at<T>(mut self, value: T) -> Self
+            where
+                T: ::std::convert::TryInto<
+                    ::std::option::Option<::chrono::DateTime<::chrono::offset::Utc>>,
+                >,
+                T::Error: ::std::fmt::Display,
+            {
+                self.scheduled_at = value
+                    .try_into()
+                    .map_err(|e| {
+                        format!("error converting supplied value for scheduled_at: {e}")
+                    });
+                self
+            }
         }
         impl ::std::convert::TryFrom<PublishRequest> for super::PublishRequest {
             type Error = super::error::ConversionError;
@@ -7651,6 +7712,7 @@ pub mod types {
                 Ok(Self {
                     account_ids: value.account_ids?,
                     cancel_before_proceeding: value.cancel_before_proceeding?,
+                    scheduled_at: value.scheduled_at?,
                 })
             }
         }
@@ -7659,6 +7721,7 @@ pub mod types {
                 Self {
                     account_ids: Ok(value.account_ids),
                     cancel_before_proceeding: Ok(value.cancel_before_proceeding),
+                    scheduled_at: Ok(value.scheduled_at),
                 }
             }
         }
@@ -7680,6 +7743,10 @@ pub mod types {
                 ::std::option::Option<::std::string::String>,
                 ::std::string::String,
             >,
+            scheduled_at: ::std::result::Result<
+                ::std::option::Option<::chrono::DateTime<::chrono::offset::Utc>>,
+                ::std::string::String,
+            >,
         }
         impl ::std::default::Default for RepublishRequest {
             fn default() -> Self {
@@ -7688,6 +7755,7 @@ pub mod types {
                     allow_if_deleted: Ok(Default::default()),
                     price_drop: Ok(Default::default()),
                     price_variation: Ok(Default::default()),
+                    scheduled_at: Ok(Default::default()),
                 }
             }
         }
@@ -7748,6 +7816,20 @@ pub mod types {
                     });
                 self
             }
+            pub fn scheduled_at<T>(mut self, value: T) -> Self
+            where
+                T: ::std::convert::TryInto<
+                    ::std::option::Option<::chrono::DateTime<::chrono::offset::Utc>>,
+                >,
+                T::Error: ::std::fmt::Display,
+            {
+                self.scheduled_at = value
+                    .try_into()
+                    .map_err(|e| {
+                        format!("error converting supplied value for scheduled_at: {e}")
+                    });
+                self
+            }
         }
         impl ::std::convert::TryFrom<RepublishRequest> for super::RepublishRequest {
             type Error = super::error::ConversionError;
@@ -7759,6 +7841,7 @@ pub mod types {
                     allow_if_deleted: value.allow_if_deleted?,
                     price_drop: value.price_drop?,
                     price_variation: value.price_variation?,
+                    scheduled_at: value.scheduled_at?,
                 })
             }
         }
@@ -7769,6 +7852,7 @@ pub mod types {
                     allow_if_deleted: Ok(value.allow_if_deleted),
                     price_drop: Ok(value.price_drop),
                     price_variation: Ok(value.price_variation),
+                    scheduled_at: Ok(value.scheduled_at),
                 }
             }
         }
@@ -10049,7 +10133,7 @@ let response = client.list_item_listings()
     }
     /**Lower the price of an item's listings
 
-Schedules a price drop of the item's existing listings, now, like the price drop of the app: the listings are updated, not republished. `value` is what is removed from each listing's current price, never the new price. Without `accountIds`, every account the item is online on. Requires `items:write` and an `Idempotency-Key`.
+Schedules a price drop of the item's existing listings, now or at `scheduledAt` (at most 30 days ahead), like the price drop of the app: the listings are updated, not republished. `value` is what is removed from each listing's current price, never the new price. Without `accountIds`, every account the item is online on. Requires `items:write` and an `Idempotency-Key`.
 
 Sends a `POST` request to `/api/public/v1/items/{id}/price-drop`
 
@@ -10068,7 +10152,7 @@ let response = client.drop_item_price()
     }
     /**Publish an item on the seller's accounts
 
-Schedules the publication of one item of the seller's stock on the given marketplace accounts, now. The publication runs on the account's browser: read its result on `GET /items/{id}/listings`. To cross-list an item ("list it on eBay"), call this route with that account: this API never relays a marketplace's own API. Publishing one item on several accounts of the same marketplace risks a strike from it: name only the accounts you mean. Requires `items:write` and an `Idempotency-Key`.
+Schedules the publication of one item of the seller's stock on the given marketplace accounts, now or at `scheduledAt` (at most 30 days ahead). The publication runs on the account's browser: read its result on `GET /items/{id}/listings`. To cross-list an item ("list it on eBay"), call this route with that account: this API never relays a marketplace's own API. Publishing one item on several accounts of the same marketplace risks a strike from it: name only the accounts you mean. Requires `items:write` and an `Idempotency-Key`.
 
 Sends a `POST` request to `/api/public/v1/items/{id}/publish`
 
@@ -10087,7 +10171,7 @@ let response = client.publish_item()
     }
     /**Republish an item on the seller's accounts
 
-Schedules the republication of one item of the seller's stock, now, exactly as the app and the MCP tool `republish_items` do: ControlResell deletes the listing and publishes it again from the item it holds, with the same safeguards (republication pace, publication guards). eBay, Shopify and Etsy do not republish: their accounts are refused (`republish_not_supported`). Without `accountIds`, every account the item is listed on. The republication runs on the account's browser: read its result on `GET /items/{id}/listings`.
+Schedules the republication of one item of the seller's stock, now or at `scheduledAt` (at most 30 days ahead), exactly as the app and the MCP tool `republish_items` do: ControlResell deletes the listing and publishes it again from the item it holds, with the same safeguards (republication pace, publication guards). eBay, Shopify and Etsy do not republish: their accounts are refused (`republish_not_supported`). Without `accountIds`, every account the item is listed on. The republication runs on the account's browser: read its result on `GET /items/{id}/listings`.
 
 This API never relays a marketplace's own API (Vinted, eBay…): every write runs a ControlResell use case on an item of the seller's stock. To cross-list an item on another account or marketplace ("list it on eBay"), call `POST /items/{id}/publish` with that account. Requires `items:write` and an `Idempotency-Key`; costs 5 units of the rate limit.
 

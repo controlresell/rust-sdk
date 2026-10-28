@@ -33,8 +33,9 @@ async fn main() -> controlresell::Result<()> {
     let item = client.create_item().body_map(|body| body.name("Jacket")).send().await?;
     let account = "<account id>".parse().unwrap();
     // publish_item, drop_item_price and republish_item take an optional scheduled_at (a chrono DateTime<Utc>, at most 30 days
-    // ahead; add the chrono crate to build one): the action starts then instead of now, the 202 receipt carries the date.
-    let at: chrono::DateTime<chrono::Utc> = "2026-11-01T09:30:00Z".parse().unwrap();
+    // ahead; add the chrono crate to build one): the action starts then instead of now (tomorrow here), the 202 receipt carries the date.
+    let tomorrow = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_secs() + 86_400;
+    let at = chrono::DateTime::<chrono::Utc>::from_timestamp(tomorrow as i64, 0).unwrap();
     client
         .with_idempotency_key(format!("publish-{}", item.id))
         .publish_item()

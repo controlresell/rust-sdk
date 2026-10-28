@@ -32,21 +32,14 @@ async fn main() -> controlresell::Result<()> {
     // retry; with_idempotency_key() chooses it, to retry a write yourself later without doing it twice.
     let item = client.create_item().body_map(|body| body.name("Jacket")).send().await?;
     let account = "<account id>".parse().unwrap();
-    client
-        .with_idempotency_key(format!("publish-{}", item.id))
-        .publish_item()
-        .id(item.id)
-        .body_map(|body| body.account_ids(vec![account]))
-        .send()
-        .await?;
-
     // publish_item, drop_item_price and republish_item take an optional scheduled_at (a chrono DateTime<Utc>, at most 30 days
     // ahead; add the chrono crate to build one): the action starts then instead of now, the 202 receipt carries the date.
     let at: chrono::DateTime<chrono::Utc> = "2026-11-01T09:30:00Z".parse().unwrap();
     client
-        .republish_item()
+        .with_idempotency_key(format!("publish-{}", item.id))
+        .publish_item()
         .id(item.id)
-        .body_map(|body| body.scheduled_at(at))
+        .body_map(|body| body.account_ids(vec![account]).scheduled_at(at))
         .send()
         .await?;
 

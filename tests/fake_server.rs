@@ -140,6 +140,40 @@ async fn a_post_keeps_the_same_idempotency_key_across_retries() {
 }
 
 #[tokio::test]
+async fn publish_price_drop_and_republish_carry_scheduled_at() {
+    let server = MockServer::start().await;
+    let receipt = json!({
+        "itemId": 7, "action": "publish", "accountIds": ["3f2c1c0e-5b7a-4a3e-9d1e-0a1b2c3d4e5f"],
+        "scheduledAt": "2026-11-01T09:30:00Z"
+    });
+    for route in ["publish", "price-drop", "republish"] {
+        Mock::given(method("POST"))
+            .and(path(format!("/api/public/v1/items/7/{route}")))
+            .respond_with(ResponseTemplate::new(202).set_body_json(receipt.clone()))
+            .mount(&server)
+            .await;
+    }
+    let client = client(&server);
+    let at: chrono::DateTime<chrono::Utc> = "2026-11-01T09:30:00Z".parse().unwrap();
+    let account: controlresell::types::ScheduledAction = serde_json::from_value(receipt.clone()).unwrap();
+    assert_eq!(account.scheduled_at, at);
+    let id = account.account_ids[0];
+
+    let published =
+        client.publish_item().id(7).body_map(|b| b.account_ids(vec![id]).scheduled_at(at)).send().await.unwrap();
+    client.drop_item_price().id(7).body_map(|b| b.type_("percent").value("10").scheduled_at(at)).send().await.unwrap();
+    client.republish_item().id(7).body_map(|b| b.scheduled_at(at)).send().await.unwrap();
+
+    assert_eq!(published.scheduled_at, at);
+    let requests = server.received_requests().await.unwrap();
+    assert_eq!(requests.len(), 3);
+    for request in requests {
+        let body: Value = serde_json::from_slice(&request.body).unwrap();
+        assert_eq!(body["scheduledAt"], "2026-11-01T09:30:00Z", "{}", request.url);
+    }
+}
+
+#[tokio::test]
 async fn two_posts_get_two_keys_and_with_idempotency_key_chooses_it() {
     let server = MockServer::start().await;
     Mock::given(method("POST"))

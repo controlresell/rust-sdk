@@ -26,6 +26,11 @@ async fn main() -> controlresell::Result<()> {
         .send()
         .await?;
 
+    // publish_item, drop_item_price and republish_item take an optional scheduled_at (a chrono DateTime<Utc>, at most 30 days
+    // ahead; add the chrono crate to build one): the action starts then instead of now, the 202 receipt carries the date.
+    let at: chrono::DateTime<chrono::Utc> = "2026-11-01T09:30:00Z".parse().unwrap();
+    client.republish_item().id(item.id).body_map(|body| body.scheduled_at(at)).send().await?;
+
     // Errors are typed: the status, the API's code and the request id to give the support.
     if let Err(failure) = client.get_item().id(42).send().await.map_err(controlresell::Error::from) {
         if failure.kind() == Some(ErrorKind::NotFound) {
